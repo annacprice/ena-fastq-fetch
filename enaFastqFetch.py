@@ -13,17 +13,18 @@ def getXML(search, dataType, number, **kwargs):
 
     # build the url for the query and download the xml file
     build_url = {"query": search,
-		         "result": dataType,
+                 "result": dataType,
                  "offset": "0",
                  "length": number,
-		         "download": "xml",
-	             "display": "xml"
+                 "download": "xml",
+                 "display": "xml"
                  }
     response = requests.get("https://www.ebi.ac.uk/ena/data/search", params=build_url)
 
     # write to file
-    open('ena.xml', 'wb').write(response.content)
-
+    oufile = open('ena.xml', 'wb')
+    outfile.write(response.content)
+    outfile.close()
 
 def parseXMLgetFTP(xmlfile):
     # parse the xml file for http links which contain information on the fastq files
@@ -41,20 +42,19 @@ def parseXMLgetFTP(xmlfile):
         if item.text.startswith("http://") and item.text.endswith("fastq_bytes"):
            httplinks.append(item.text)
 
-    
     # fetch http data and write to file
     with open('fastq.txt', 'wb') as outfile:
         for url in httplinks:
             response = requests.get(url)
             outfile.write(response.content)
 
-
 def parseFTPgetFASTQ(ftpinfo):
     # parse the txt file with the fastq info for the ftp links and download
     
-    mysum = 0
+    # use regex to compile ftp links
     regexftp = re.compile("ftp.")
 
+    # fetch files from ftp server
     with open(ftpinfo, 'r') as infile:
         for line in infile:
             linesplit = line.split()[1]
@@ -62,7 +62,6 @@ def parseFTPgetFASTQ(ftpinfo):
                 filename = linesplit[linesplit.rfind("/")+1:]
                 ftplink = "ftp://" + linesplit
                 urllib.request.urlretrieve(ftplink, filename)
-
 
 def main():
     parser = argparse.ArgumentParser()

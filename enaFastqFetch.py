@@ -22,7 +22,7 @@ def getXML(search, dataType, number, **kwargs):
     response = requests.get("https://www.ebi.ac.uk/ena/data/search", params=build_url)
 
     # write to file
-    oufile = open('ena.xml', 'wb')
+    outfile = open('ena.xml', 'wb')
     outfile.write(response.content)
     outfile.close()
 
@@ -59,9 +59,11 @@ def parseFTPgetFASTQ(ftpinfo):
         for line in infile:
             linesplit = line.split()[1]
             if regexftp.match(linesplit):
-                filename = linesplit[linesplit.rfind("/")+1:]
-                ftplink = "ftp://" + linesplit
-                urllib.request.urlretrieve(ftplink, filename)
+                # check for paired fastq files
+                for elem in linesplit.split(";", 1):
+                    filename = elem[elem.rfind("/")+1:]
+                    ftplink = "ftp://" + elem
+                    urllib.request.urlretrieve(ftplink, filename)
 
 def main():
     parser = argparse.ArgumentParser()

@@ -61,9 +61,12 @@ def parseFTPgetFASTQ(ftpinfo):
     with open(ftpinfo, 'r') as infile:
         # collate all the filesizes
         for line in infile:
-            linesplit = line.split()[3]
+            try:
+            	linesplit = line.split()[3]
+            except IndexError:
+                linesplit = "null"
             if regexSize.match(linesplit):
-                for elem in linesplit.split(";", 1):
+                for elem in linesplit.split(";", 2):
                     Size.append(elem)
     
         # sum total filesizes and launch CLI to confirm download
@@ -78,7 +81,7 @@ def parseFTPgetFASTQ(ftpinfo):
             linesplit = line.split()[1]
             if regexFTP.match(linesplit):
                 # check for paired fastq files
-                for elem in linesplit.split(";", 1):
+                for elem in linesplit.split(";", 2):
                     filename = elem[elem.rfind("/")+1:]
                     ftplink = "ftp://" + elem
                     urllib.request.urlretrieve(ftplink, filename)
@@ -93,7 +96,6 @@ def YesOrNo(answer=None):
         answer = input().lower()
         if answer in yes:
             answer =yes
-            continue
         elif answer in no:
             exit()
         else:

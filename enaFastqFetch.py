@@ -54,9 +54,8 @@ def parseFTPgetFASTQ(ftpinfo):
         
     # use regex to compile ftp links
     regexFTP = re.compile("ftp.")
-
     # use regex to compile filesizes
-    regexSize = re.compile(r"\d*;\d*")
+    regexSize = re.compile(r"\d*;\d*|\d")
 
     Size = []
     with open(ftpinfo, 'r') as infile:

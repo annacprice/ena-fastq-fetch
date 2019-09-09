@@ -8,6 +8,7 @@ import argparse
 import xml.etree.ElementTree as ET
 import urllib.request
 
+
 def getXML(search, dataType, number, **kwargs):
     # download an xml file for the specified search terms	
 
@@ -50,20 +51,54 @@ def parseXMLgetFTP(xmlfile):
 
 def parseFTPgetFASTQ(ftpinfo):
     # parse the txt file with the fastq info for the ftp links and download
-    
+        
     # use regex to compile ftp links
-    regexftp = re.compile("ftp.")
+    regexFTP = re.compile("ftp.")
 
-    # fetch files from ftp server
+    # use regex to compile filesizes
+    regexSize = re.compile(r"\d*;\d*")
+
+    Size = []
     with open(ftpinfo, 'r') as infile:
+        # collate all the filesizes
+        for line in infile:
+            linesplit = line.split()[3]
+            if regexSize.match(linesplit):
+                for elem in linesplit.split(";", 1):
+                    Size.append(elem)
+    
+        # sum total filesizes and launch CLI to confirm download
+        add = [int(x) for x in Size]
+        tot = sum(add)/10**9
+        print("You are about to download " + str(round(tot, 2)) +  " GB of files. Do you wish to continue?")
+        YesOrNo(answer=None)
+
+    with open(ftpinfo, 'r') as infile:
+    # fetch files from ftpserver
         for line in infile:
             linesplit = line.split()[1]
-            if regexftp.match(linesplit):
+            if regexFTP.match(linesplit):
                 # check for paired fastq files
                 for elem in linesplit.split(";", 1):
                     filename = elem[elem.rfind("/")+1:]
                     ftplink = "ftp://" + elem
                     urllib.request.urlretrieve(ftplink, filename)
+
+def YesOrNo(answer=None):
+    #CLI to check whether user wishes to download files
+
+    yes = ("yes", "y", "ye")
+    no = ("no", "n")
+
+    while answer not in (yes, no):
+        answer = input().lower()
+        if answer in yes:
+            answer =yes
+            continue
+        elif answer in no:
+            exit()
+        else:
+            print("Please enter yes or no:")
 
 def main():
     parser = argparse.ArgumentParser()

@@ -8,7 +8,6 @@ import argparse
 import xml.etree.ElementTree as ET
 import urllib.request
 
-
 def getXML(search, dataType, number, **kwargs):
     # download an xml file for the specified search terms	
 
@@ -36,7 +35,6 @@ def parseXMLgetFTP(xmlfile):
     # get root element
     root = tree.getroot()
     
-    # initialise httplinks
     httplinks = []
     # iterate xml file for http links
     for item in root.iter("ID"):
@@ -48,6 +46,26 @@ def parseXMLgetFTP(xmlfile):
         for url in httplinks:
             response = requests.get(url)
             outfile.write(response.content)
+
+    # gather info for report file
+    accessID = []
+    for item in root.iterfind("RUN/IDENTIFIERS/PRIMARY_ID"):
+        accessID.append(item.text)
+
+    for item in root.iterfind("STUDY/IDENTIFIERS/PRIMARY_ID"):
+        accessID.append(item.text)
+    
+    title = []
+    for item in root.iter("TITLE"):
+        title.append(item.text)
+
+    for item in root.iter("STUDY_TITLE"):
+        title.append(item.text)
+
+    # write to report file
+    with open("report.txt","w") as outfile:
+        for item in zip(accessID, title):
+            outfile.write("{0}\t{1}\n".format(item[0], item[1]))	 
 
 def parseFTPgetFASTQ(ftpinfo):
     # parse the txt file with the fastq info for the ftp links and download
@@ -69,7 +87,7 @@ def parseFTPgetFASTQ(ftpinfo):
                 for elem in linesplit.split(";", 2):
                     Size.append(elem)
     
-        # sum total filesizes and launch CLI to confirm download
+        # sum total filesizes
         add = [int(x) for x in Size]
         tot = sum(add)/10**9
         print("You are about to download " + str(round(tot, 2)) +  " GB of files")

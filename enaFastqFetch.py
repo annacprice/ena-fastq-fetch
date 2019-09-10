@@ -72,8 +72,8 @@ def parseFTPgetFASTQ(ftpinfo):
         # sum total filesizes and launch CLI to confirm download
         add = [int(x) for x in Size]
         tot = sum(add)/10**9
-        print("You are about to download " + str(round(tot, 2)) +  " GB of files. Do you wish to continue?")
-        YesOrNo(answer=None)
+        print("You are about to download " + str(round(tot, 2)) +  " GB of files")
+        sys.stdout.flush()
 
     with open(ftpinfo, 'r') as infile:
     # fetch files from ftpserver
@@ -85,21 +85,6 @@ def parseFTPgetFASTQ(ftpinfo):
                     filename = elem[elem.rfind("/")+1:]
                     ftplink = "ftp://" + elem
                     urllib.request.urlretrieve(ftplink, filename)
-
-def YesOrNo(answer=None):
-    #CLI to check whether user wishes to download files
-
-    yes = ("yes", "y", "ye")
-    no = ("no", "n")
-
-    while answer not in (yes, no):
-        answer = input().lower()
-        if answer in yes:
-            answer =yes
-        elif answer in no:
-            exit()
-        else:
-            print("Please enter yes or no:")
 
 def main():
     parser = argparse.ArgumentParser()

@@ -26,7 +26,7 @@ def getXML(search, dataType, number, **kwargs):
     outfile.write(response.content)
     outfile.close()
 
-def parseXMLgetFTP(xmlfile):
+def parseXMLgetFTP(xmlfile, dataType):
     # parse the xml file for http links which contain information on the fastq files
     # open the http links and write the result to file
 
@@ -40,7 +40,7 @@ def parseXMLgetFTP(xmlfile):
     for item in root.iter("ID"):
         if item.text.startswith("http://") and item.text.endswith("fastq_bytes"):
            httplinks.append(item.text)
-
+    
     # fetch http data and write to file
     with open('fastq.txt', 'wb') as outfile:
         for url in httplinks:
@@ -49,23 +49,28 @@ def parseXMLgetFTP(xmlfile):
 
     # gather info for report file
     accessID = []
-    for item in root.iterfind("RUN/IDENTIFIERS/PRIMARY_ID"):
-        accessID.append(item.text)
-
-    for item in root.iterfind("STUDY/IDENTIFIERS/PRIMARY_ID"):
-        accessID.append(item.text)
-    
     title = []
-    for item in root.iter("TITLE"):
-        title.append(item.text)
+    enaURL = []
+    
+    if dataType == "READ_RUN":
+    	for item in root.iterfind("RUN/IDENTIFIERS/PRIMARY_ID"):
+            accessID.append(item.text)
+            for item in root.iter("TITLE"):
+                title.append(item.text)
 
-    for item in root.iter("STUDY_TITLE"):
-        title.append(item.text)
+    if dataType == "READ_STUDY":
+    	for item in root.iterfind("STUDY/IDENTIFIERS/PRIMARY_ID"):
+            accessID.append(item.text)
+            for item in root.iter("STUDY_TITLE"):
+                title.append(item.text)
+    
+    for item in accessID:
+        enaURL.append("https://www.ebi.ac.uk/ena/data/view/{0}".format(item))
 
     # write to report file
-    with open("report.txt","w") as outfile:
-        for item in zip(accessID, title):
-            outfile.write("{0}\t{1}\n".format(item[0], item[1]))	 
+    with open("report.txt", "w") as outfile:
+        for item in zip(accessID, title, enaURL):
+            outfile.write("{0}\t{1}\t{2}\n".format(item[0], item[1], item[2]))	 
 
 def parseFTPgetFASTQ(ftpinfo):
     # parse the txt file with the fastq info for the ftp links and download
@@ -115,9 +120,10 @@ def main():
 			help = "number of studies/reads you wish to download")
     args = parser.parse_args() 
     args.method(**vars(args))
+    dataType = args.dataType
 	
-    parseXMLgetFTP('ena.xml')
-    parseFTPgetFASTQ('fastq.txt')
+    parseXMLgetFTP('ena.xml', dataType)
+    #parseFTPgetFASTQ('fastq.txt')
 
 if __name__ == "__main__":
     main()

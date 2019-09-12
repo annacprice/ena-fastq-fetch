@@ -123,7 +123,7 @@ def main():
     dataType = args.dataType
 	
     parseXMLgetFTP('ena.xml', dataType)
-    #parseFTPgetFASTQ('fastq.txt')
+    parseFTPgetFASTQ('fastq.txt')
 
 if __name__ == "__main__":
     main()

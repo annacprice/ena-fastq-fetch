@@ -7,6 +7,7 @@ import re
 import argparse
 import xml.etree.ElementTree as ET
 import urllib.request
+import fileinput
 
 def getXML(search, dataType, number, **kwargs):
     # download an xml file for the specified search terms	
@@ -98,16 +99,25 @@ def parseFTPgetFASTQ(ftpinfo):
         print("You are about to download " + str(round(tot, 2)) +  " GB of files")
         sys.stdout.flush()
 
+    fileType = []
     with open(ftpinfo, 'r') as infile:
-    # fetch files from ftpserver
+        # fetch files from ftpserver
         for line in infile:
             linesplit = line.split()[1]
             if regexFTP.match(linesplit):
                 # check for paired fastq files
+                if len(linesplit.split(";", 2)) >= 2:
+                    fileType.append("PAIRED")
+                else:
+                    fileType.append("SINGLE")
                 for elem in linesplit.split(";", 2):
                     filename = elem[elem.rfind("/")+1:]
                     ftplink = "ftp://" + elem
                     urllib.request.urlretrieve(ftplink, filename)
+     
+    # write fileType to report file
+    for item, line in zip(fileType, fileinput.input(["report.txt"], inplace=True)):
+        print(line.strip() + "\t" + str(item))
 
 def main():
     parser = argparse.ArgumentParser()

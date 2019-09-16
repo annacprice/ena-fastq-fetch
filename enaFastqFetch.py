@@ -23,9 +23,8 @@ def getXML(search, dataType, number, **kwargs):
     response = requests.get("https://www.ebi.ac.uk/ena/data/search", params=build_url)
 
     # write to file
-    outfile = open('ena.xml', 'wb')
-    outfile.write(response.content)
-    outfile.close()
+    with open('ena.xml', 'wb') as outfile:
+        outfile.write(response.content)
 
 def parseXMLgetFTP(xmlfile, dataType):
     # parse the xml file for http links which contain information on the fastq files
@@ -52,7 +51,7 @@ def parseXMLgetFTP(xmlfile, dataType):
     accessID = []
     title = []
     enaURL = []
-    
+
     if dataType == "READ_RUN":
     	for item in root.iterfind("RUN/IDENTIFIERS/PRIMARY_ID"):
             accessID.append(item.text)
@@ -68,10 +67,7 @@ def parseXMLgetFTP(xmlfile, dataType):
     for item in accessID:
         enaURL.append("https://www.ebi.ac.uk/ena/data/view/{0}".format(item))
 
-    # write to report file
-    with open("report.txt", "w") as outfile:
-        for item in zip(accessID, title, enaURL):
-            outfile.write("{0}\t{1}\t{2}\n".format(item[0], item[1], item[2]))	 
+    return accessID, title, enaURL
 
 def parseFTPgetFASTQ(ftpinfo):
     # parse the txt file with the fastq info for the ftp links and download
@@ -80,8 +76,11 @@ def parseFTPgetFASTQ(ftpinfo):
     regexFTP = re.compile("ftp.")
     # use regex to compile filesizes
     regexSize = re.compile(r"\d*;\d*|\d")
-
-    Size = []
+    
+    # gather info for report file
+    fileSize = []
+    seqType = []
+    
     with open(ftpinfo, 'r') as infile:
         # collate all the filesizes
         for line in infile:
@@ -91,33 +90,35 @@ def parseFTPgetFASTQ(ftpinfo):
                 linesplit = "null"
             if regexSize.match(linesplit):
                 for elem in linesplit.split(";", 2):
-                    Size.append(elem)
-    
+                    fileSize.append(elem)
+                        
         # sum total filesizes
-        add = [int(x) for x in Size]
+        add = [int(x) for x in fileSize]
         tot = sum(add)/10**9
         print("You are about to download " + str(round(tot, 2)) +  " GB of files")
         sys.stdout.flush()
 
-    fileType = []
     with open(ftpinfo, 'r') as infile:
-        # fetch files from ftpserver
         for line in infile:
             linesplit = line.split()[1]
             if regexFTP.match(linesplit):
                 # check for paired fastq files
                 if len(linesplit.split(";", 2)) >= 2:
-                    fileType.append("PAIRED")
+                    seqType.append("PAIRED")
                 else:
-                    fileType.append("SINGLE")
+                    seqType.append("SINGLE")
                 for elem in linesplit.split(";", 2):
                     filename = elem[elem.rfind("/")+1:]
                     ftplink = "ftp://" + elem
                     urllib.request.urlretrieve(ftplink, filename)
-     
-    # write fileType to report file
-    for item, line in zip(fileType, fileinput.input(["report.txt"], inplace=True)):
-        print(line.strip() + "\t" + str(item))
+
+    return seqType
+
+def writeReport(accessID, title, enaURL, seqType):
+    # write report file
+    with open('report.txt', 'w') as outfile:
+        for item in zip(accessID, title, enaURL, seqType):
+            outfile.write("{0}\t{1}\t{2}\t{3}\n".format(item[0], item[1], item[2], item[3]))
 
 def main():
     parser = argparse.ArgumentParser()
@@ -132,8 +133,9 @@ def main():
     args.method(**vars(args))
     dataType = args.dataType
 	
-    parseXMLgetFTP('ena.xml', dataType)
-    parseFTPgetFASTQ('fastq.txt')
+    accessID, title, enaURL = parseXMLgetFTP('ena.xml', dataType)
+    seqType = parseFTPgetFASTQ('fastq.txt')
+    writeReport(accessID, title, enaURL, seqType)
 
 if __name__ == "__main__":
     main()

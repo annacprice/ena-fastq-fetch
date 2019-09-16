@@ -1,5 +1,5 @@
 # ena-fastq-fetch
-EnaFastqFetch can be used to query the ENA for different types of data and bulk download the associated fastq files.
+EnaFastqFetch can be used to query the ENA for different types of data and bulk download the associated fastq files. Upon completion of the download a report file is generated.
 
 CAUTION: Please be aware you may be downloading very large datasets. Before downloading, the program will print to the terminal the total size of the files to be downloaded.
 

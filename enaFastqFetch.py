@@ -6,6 +6,7 @@ import requests
 import re
 import argparse
 import xml.etree.ElementTree as ET
+from xml.etree.ElementTree import fromstring, ElementTree
 import urllib.request
 import fileinput
 
@@ -20,6 +21,7 @@ def getXML(search, dataType, number, **kwargs):
                  "download": "xml",
                  "display": "xml"
                  }
+    
     response = requests.get("https://www.ebi.ac.uk/ena/data/search", params=build_url)
 
     # write to file
@@ -120,6 +122,47 @@ def writeReport(accessID, title, enaURL, seqType):
         for item in zip(accessID, title, enaURL, seqType):
             outfile.write("{0}\t{1}\t{2}\t{3}\n".format(item[0], item[1], item[2], item[3]))
 
+def studyBreakdown(ftpinfo):
+    # extract information for report on each run in a study
+
+    # use regex to compile run accessions
+    regexSRR = re.compile("SRR")  
+  
+    # gather info for study report
+    runAccess = []
+    runTitle = []
+    
+    # get accession for each run
+    with open(ftpinfo, 'r') as infile:
+        for line in infile:
+            linesplit = line.split()[0]
+            if regexSRR.match(linesplit):
+               runAccess.append(linesplit)
+
+    # get xml for each run
+    for elem in runAccess:
+        build_url = {"query": elem,
+		             "result": "READ_RUN",
+		             "offset": "0",
+		             "download": "xml",
+                     "display": "xml"
+	       	         }
+
+        response = requests.get("https://www.ebi.ac.uk/ena/data/search", params=build_url)
+
+        # create element tree object
+        tree = ElementTree(fromstring(response.content))
+        # get root element
+        root = tree.getroot()
+
+        for item in root.iter("TITLE"):
+            runTitle.append(item.text)
+
+    # write study report file
+    with open('studyBreakdown.txt', 'w') as outfile:
+        for item in zip(runAccess, runTitle):
+            outfile.write("{0}\t{1}\n".format(item[0], item[1]))
+
 def main():
     parser = argparse.ArgumentParser()
     parser.set_defaults(method=getXML)
@@ -135,7 +178,11 @@ def main():
 	
     accessID, title, enaURL = parseXMLgetFTP('ena.xml', dataType)
     seqType = parseFTPgetFASTQ('fastq.txt')
+
     writeReport(accessID, title, enaURL, seqType)
+
+    if dataType == "READ_STUDY":
+        studyBreakdown('fastq.txt')
 
 if __name__ == "__main__":
     main()

@@ -61,7 +61,7 @@ def parseXMLgetFTP(xmlfile, dataType):
                 title.append(item.text)
 
     if dataType == "READ_STUDY":
-    	for item in root.iterfind("STUDY/IDENTIFIERS/PRIMARY_ID"):
+    	for item in root.iterfind("STUDY/IDENTIFIERS/SECONDARY_ID"):
             accessID.append(item.text)
             for item in root.iter("STUDY_TITLE"):
                 title.append(item.text)
@@ -142,11 +142,11 @@ def studyBreakdown(ftpinfo):
     # get xml for each run
     for elem in runAccess:
         build_url = {"query": elem,
-		             "result": "READ_RUN",
-		             "offset": "0",
-		             "download": "xml",
+                     "result": "READ_RUN",
+                     "offset": "0",
+                     "download": "xml",
                      "display": "xml"
-	       	         }
+                     }
 
         response = requests.get("https://www.ebi.ac.uk/ena/data/search", params=build_url)
 

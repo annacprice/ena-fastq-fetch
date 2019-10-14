@@ -61,7 +61,7 @@ def parseXMLgetFTP(xmlfile, dataType):
                 title.append(item.text)
 
     if dataType == "READ_STUDY":
-    	for item in root.iterfind("STUDY/IDENTIFIERS/SECONDARY_ID"):
+    	for item in root.iterfind("STUDY/IDENTIFIERS/PRIMARY_ID"):
             accessID.append(item.text)
             for item in root.iter("STUDY_TITLE"):
                 title.append(item.text)

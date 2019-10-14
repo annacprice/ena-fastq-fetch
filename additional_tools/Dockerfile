@@ -1,9 +1,12 @@
 FROM python:3.6-alpine
 
-WORKDIR /app
+WORKDIR /data
 
-COPY enaFastqFetch.py /app
+COPY enaFastqFetch /usr/local/bin
 
-RUN pip install --no-cache-dir requests
+RUN pip install --upgrade pip && \ 
+pip install --no-cache-dir requests
 
-ENTRYPOINT ["python", "enaFastqFetch.py"]
+ENV PATH="/usr/local/bin:${PATH}"
+
+ENTRYPOINT ["enaFastqFetch"]

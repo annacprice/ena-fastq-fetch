@@ -23,7 +23,7 @@ optional arguments:
                         data type you wish to search for, e.g. READ_STUDY,
                         READ_RUN
   -n NUMBER, --number-download NUMBER
-                        number of studies/reads you wish to download
+                        number of studies/runs you wish to download
 ```
 ## **Examples**
 E.g. to download 3 selex studies:

@@ -171,7 +171,7 @@ def main():
     parser.add_argument("-d", "--data-type", dest="dataType", required=True, \
 		        help = "data type you wish to search for, e.g. READ_STUDY, READ_RUN")
     parser.add_argument("-n", "--number-download", dest="number", required=True, \
-			help = "number of studies/reads you wish to download")
+			help = "number of studies/runs you wish to download")
     args = parser.parse_args() 
     args.method(**vars(args))
     dataType = args.dataType

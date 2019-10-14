@@ -126,7 +126,7 @@ def studyBreakdown(ftpinfo):
     # extract information for report on each run in a study
 
     # use regex to compile run accessions
-    regexSRR = re.compile("SRR")  
+    regexSRR = re.compile("SRR|ERR|DRR")  
   
     # gather info for study report
     runAccess = []

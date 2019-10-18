@@ -27,7 +27,7 @@ optional arguments:
                         download
 ```
 
-## **How EnaFastqFetch works**
+## **How enaFastqFetch works**
 enaFastqFetch works by building REST URLs to query the ENA Advanced Search. By providing enaFastqFetch with a search term, datatype, and number of downloads, it will automatically download the fastqs associated with your request. It will also generate useful reports on the data including the accession IDs, the recorded title of the data, links to the data record, and whether the fastqs are single or paired.
 
 ### **Search term**
@@ -37,18 +37,18 @@ The search term is specified through the -s flag. You can search for data by usi
 The datatype is specified through the -d flag. enaFastqFetch supports three datatypes: READ_RUN, READ_EXPERIMENT, and READ_STUDY.
 
 The ENA uses a hierarchical system to define the datatype:
-• STUDY (accessions beginning with SRP, ERP, or DRP)
+* STUDY (accessions beginning with SRP, ERP, or DRP):
 A study defines an overarching investigation. In most cases it's a dataset associated with a publication.
-• SAMPLE (accessions beginning with SRS, ERS, or DRS)
+* SAMPLE (accessions beginning with SRS, ERS, or DRS):
 A sample is a biological sample which is used in a study.
-• EXPERIMENT (accessions beginning with SRX, ERX, or DRX)
+* EXPERIMENT (accessions beginning with SRX, ERX, or DRX):
 An experiment is conducted on a sample. This defines things like the instrument used for sequencing and the library preparation.
-• RUN (accessions beginning with SRR, ERR, or DRR)
+* RUN (accessions beginning with SRR, ERR, or DRR):
 A run is the actual sequencing reads which are associated with a sample and experiment. I.e. these are the fastq files.
 
 So for example the run [SRR3206414](https://www.ebi.ac.uk/ena/data/view/SRR3206414) is associated with the sample [SRS1318643](https://www.ebi.ac.uk/ena/data/view/SRS1318643) and the experiment [SRX1615315](https://www.ebi.ac.uk/ena/data/view/SRX1615315), and overall it belongs to the study [SRP071047/PRJNA313382](https://www.ebi.ac.uk/ena/data/view/PRJNA313382).
 
-### **Number of downloads **
+### **Number of downloads**
 The maximum number of allowed downloads for your requested search term and datatype is specified through the -n flag. The number of downloads has an upper limit of 100,000. When downloading by accession ID the number of downloads will always be 1.
 
 ## **Examples of using the accession ID to download**

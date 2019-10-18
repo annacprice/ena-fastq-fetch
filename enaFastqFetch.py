@@ -65,6 +65,12 @@ def parseXMLgetFTP(xmlfile, dataType):
             accessID.append(item.text)
             for item in root.iter("STUDY_TITLE"):
                 title.append(item.text)
+
+    if dataType == "READ_EXPERIMENT":
+        for item in root.iterfind("EXPERIMENT/IDENTIFIERS/PRIMARY_ID"):
+            accessID.append(item.text)
+            for item in root.iter("TITLE"):
+                title.append(item.text)
     
     for item in accessID:
         enaURL.append("https://www.ebi.ac.uk/ena/data/view/{0}".format(item))
@@ -167,11 +173,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.set_defaults(method=getXML)
     parser.add_argument("-s", "--search-term", dest="search", required=True, \
-			help = "term you wish to search for, e.g. SELEX, Mycobacterium, SRR5188398, PRJNA360902")
+                        help = "term you wish to search for, e.g. SELEX, Mycobacterium, SRR5188398, SRX2504319, PRJNA360902")
     parser.add_argument("-d", "--data-type", dest="dataType", required=True, \
-		        help = "data type you wish to search for, e.g. READ_STUDY, READ_RUN")
+                        help = "data type you wish to search for, e.g. READ_RUN, READ_EXPERIMENT, READ_STUDY")
     parser.add_argument("-n", "--number-download", dest="number", required=True, \
-			help = "number of studies/runs you wish to download")
+                        help = "number of runs/experiments/studies you wish to download")
     args = parser.parse_args() 
     args.method(**vars(args))
     dataType = args.dataType

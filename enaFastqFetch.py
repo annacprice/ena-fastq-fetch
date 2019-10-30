@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-from xmlparser import getXML
+from xmlparser import getXML, parseXMLgetFTP, parseFTPgetFASTQ
 
 
 def main():
@@ -14,7 +14,10 @@ def main():
     args = parser.parse_args() 
     args.method(**vars(args))
 
+    dataType = args.dataType
 
+    parseXMLgetFTP('ena.xml', dataType)
+    parseFTPgetFASTQ('fastq.txt')
 
 if __name__ == "__main__":
     main()

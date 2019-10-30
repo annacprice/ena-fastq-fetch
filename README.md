@@ -1,7 +1,7 @@
 # ena-fastq-fetch
-enaFastqFetch can be used to query the ENA for different types of data and bulk download the associated fastq files. Upon completion of the download several report files are generated providing information on the downloaded data.
+enaFastqFetch can be used to query the ENA for different types of data and bulk download the associated fastq files.
 
-CAUTION: Please be aware you may be downloading very large datasets. Before downloading, the program will print to the terminal the total size of the files to be downloaded.
+CAUTION: Please be aware you may be downloading very large datasets. Before downloading the program will print to the terminal the total size of the files to be downloaded.
 
 ## **Requirements**
 
@@ -17,8 +17,34 @@ usage: enaFastqFetch.py [-h] -s SEARCH -d DATATYPE
 optional arguments:
 -h, --help            show this help message and exit
 -s SEARCH, --search-term SEARCH
-                      term you wish to search for, e.g. Mycobacterium, 1773
+                      term you wish to search for, e.g. Mycobacterium, 1763,
+                      SRR5188398, SRX2504319, PRJNA360902, SELEX
 -d DATATYPE, --data-type DATATYPE
-                      data type you wish to search for, e.g. read run
+                      datatype you wish to search for, e.g. run, study,
+                      experiment
 ```
+## **Examples of using the accession ID to download**
+E.g. to download the fastq associated with the run SRR5188398:
+```
+python enaFastqFetch.py -s SRR5188398 -d run
+```
+E.g. to download the all the fastqs associated with the study PRJNA360902:
+```
+python enaFastqFetch.py -s PRJNA360902 -d study
+```
+E.g. to download the all the fastqs associated with the experiment SRX2504319:
+```
+python enaFastqFetch.py -s SRX2504319 -d experiment
+```
+## **Examples of using the taxonomic ID to download**
+E.g. to download all the runs found for the taxon 1780:
+```
+python enaFastqFetch.py -s 1780 -d run
+```
+## **Examples of using free text search to download**
+E.g. to download selex studies:
+```
+python enaFastqFetch.py -s "SELEX" -d study
+```
+
 

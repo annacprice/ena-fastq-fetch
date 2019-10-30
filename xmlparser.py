@@ -8,21 +8,46 @@ import re
 import urllib.request
 
 def getXML(search, dataType, **kwargs):
-    # download an xml file for the specified search terms	
+    # download an xml file for the specified search terms
 
-    # build the url for the query and download the xml file
+    # if search query is entirely numeric, download by taxon
     if all(charac.isdigit() for charac in search):
+        # ammend datatype for api
+        if dataType == "run":
+            dataType = "read_run"
+        elif dataType == "study":
+            dataType = "read_study"
+        elif dataType == "experiment":
+            dataType = "read_experiment"
+        else:
+            print ("Datatype is not recognised. Supported values are: run, study or experiment")
+            exit()
+        
+        # build the url for the query and download the xml file
         build_url = {"accession": search,
                     "result": dataType
                     }
-        response = requests.get("https://www.ebi.ac.uk/ena/browser/api/xml/links/taxon", params=build_url)
-    else:
-        if dataType == "read_run":
-            dataType = "sra-run"
 
+        response = requests.get("https://www.ebi.ac.uk/ena/browser/api/xml/links/taxon", params=build_url)
+            
+    # else use free text search
+    else:
+        # ammend datatype for api
+        if dataType == "run":
+            dataType = "sra-run"
+        elif dataType == "study":
+            dataType = "sra-study"
+        elif dataType == "experiment":
+            dataType = "sra-experiment"
+        else:
+            print ("Datatype is not recognised. Supported values are: run, study or experiment")
+            exit()
+        
+        # build the url for the query and download the xml file
         build_url = {"domain": dataType,
                     "query": search
                     }
+                        
         response = requests.get("https://www.ebi.ac.uk/ena/browser/api/xml/textsearch", params=build_url)
 
     # write to file
@@ -50,6 +75,7 @@ def parseXMLgetFTP(xmlfile, dataType):
             response = requests.get(url)
             outfile.write(response.content)
 
+
 def parseFTPgetFASTQ(ftpinfo):
     # parse the txt file with the fastq info for the ftp links and download
     
@@ -58,9 +84,8 @@ def parseFTPgetFASTQ(ftpinfo):
     # use regex to compile filesizes
     regexSize = re.compile(r"\d*;\d*|\d")
     
-    # gather info on filesizes and if single/paired sequencing
+    # gather info on filesizes
     fileSize = []
-    seqType = []
     
     with open(ftpinfo, 'r') as infile:
         # collate all the filesizes
@@ -73,24 +98,20 @@ def parseFTPgetFASTQ(ftpinfo):
                 for elem in linesplit.split(";", 2):
                     fileSize.append(elem)
     
-        # sum total filesizes
+        # sum total filesizes and print to terminal
         add = [int(x) for x in fileSize]
         tot = sum(add)/10**9
         print("You are about to download " + str(round(tot, 2)) +  " GB of files")
         sys.stdout.flush()
 
         with open(ftpinfo, 'r') as infile:
+            # get the ftp links
             for line in infile:
                 linesplit = line.split()[1]
                 if regexFTP.match(linesplit):
                     # check for paired fastq files
-                    if len(linesplit.split(";", 2)) >= 2:
-                        seqType.append("PAIRED")
-                    else:
-                        seqType.append("SINGLE")
                     for elem in linesplit.split(";", 2):
                         filename = elem[elem.rfind("/")+1:]
                         ftplink = "ftp://" + elem
+                        # download fastqs
                         urllib.request.urlretrieve(ftplink, filename)
-
-

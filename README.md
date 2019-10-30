@@ -28,11 +28,11 @@ E.g. to download the fastq associated with the run SRR5188398:
 ```
 python enaFastqFetch.py -s SRR5188398 -d run
 ```
-E.g. to download the all the fastqs associated with the study PRJNA360902:
+E.g. to download all of the fastqs associated with the study PRJNA360902:
 ```
 python enaFastqFetch.py -s PRJNA360902 -d study
 ```
-E.g. to download the all the fastqs associated with the experiment SRX2504319:
+E.g. to download all of the fastqs associated with the experiment SRX2504319:
 ```
 python enaFastqFetch.py -s SRX2504319 -d experiment
 ```

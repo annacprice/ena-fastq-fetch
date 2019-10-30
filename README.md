@@ -1,7 +1,7 @@
 # ena-fastq-fetch
 enaFastqFetch can be used to query the ENA for different types of data and bulk download the associated fastq files.
 
-CAUTION: Please be aware you may be downloading very large datasets. Before downloading the program will print to the terminal the total size of the files to be downloaded.
+CAUTION: Please be aware you may be downloading very large datasets. Before downloading the fastqs, the program will print to the terminal the total size of the files to be downloaded.
 
 ## **Requirements**
 
@@ -37,9 +37,9 @@ E.g. to download all of the fastqs associated with the experiment SRX2504319:
 python enaFastqFetch.py -s SRX2504319 -d experiment
 ```
 ## **Examples of using the taxonomic ID to download**
-E.g. to download all the runs found for the taxon 1780:
+E.g. to download all the runs found for the taxon 47839:
 ```
-python enaFastqFetch.py -s 1780 -d run
+python enaFastqFetch.py -s 47839 -d run
 ```
 ## **Examples of using free text search to download**
 E.g. to download selex studies:

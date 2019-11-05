@@ -12,7 +12,7 @@ The following python packages are prerequisites:
 
 ## **Usage**
 ```
-usage: enaFastqFetch.py [-h] -s SEARCH -d DATATYPE
+usage: enaFastqFetch.py [-h] -s SEARCH -d DATATYPE [-n NUMRUNS]
 
 optional arguments:
 -h, --help            show this help message and exit
@@ -22,6 +22,8 @@ optional arguments:
 -d DATATYPE, --data-type DATATYPE
                       datatype you wish to search for, e.g. run, study,
                       experiment
+-n NUMRUNS, --num-runs NUMRUNS
+                      number of runs you wish to download
 ```
 ## **Examples of using the accession ID to download**
 E.g. to download the fastq associated with the run SRR5188398:
@@ -41,10 +43,12 @@ E.g. to download all the runs found for the taxon 47839:
 ```
 python enaFastqFetch.py -s 47839 -d run
 ```
+The number of runs to download can be specified using the -n flag. E.g. to download 10 runs for the taxon 1773:
+```
+python enaFastqFetch.py -s 1773 -d run -n 10
+```
 ## **Examples of using free text search to download**
 E.g. to download selex studies:
 ```
 python enaFastqFetch.py -s "SELEX" -d study
 ```
-
-

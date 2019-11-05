@@ -49,7 +49,7 @@ def getXML(search, dataType, **kwargs):
     with open('ena.xml', 'wb') as outfile:
         outfile.write(response.content)
 
-def parseXMLgetFTP(xmlfile, dataType):
+def parseXMLgetFTP(xmlfile, dataType, numRuns):
     # parse the xml file for http links which contain information on the fastq files
     # open the http links and write the result to file
 
@@ -62,8 +62,13 @@ def parseXMLgetFTP(xmlfile, dataType):
     # iterate xml file for http links
     for item in root.iter("ID"):
         if item.text.startswith("http://") and item.text.endswith("fastq_bytes"):
-           httplinks.append(item.text)
-    
+            httplinks.append(item.text)
+
+    # if number of runs has been specified then take slice of httplinks
+    if numRuns:
+        num = int(numRuns)
+        httplinks = httplinks[:num]
+
     # fetch http data and write to file
     with open('fastq.txt', 'wb') as outfile:
         for url in httplinks:

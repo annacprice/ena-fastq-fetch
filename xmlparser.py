@@ -22,14 +22,11 @@ def getXML(search, dataType, **kwargs):
         else:
             print ("Datatype is not recognised. Supported values are: run, study or experiment")
             exit()
-        
         # build the url for the query and download the xml file
         build_url = {"accession": search,
                     "result": dataType
                     }
-
         response = requests.get("https://www.ebi.ac.uk/ena/browser/api/xml/links/taxon", params=build_url)
-            
     # else use free text search
     else:
         # ammend datatype for api
@@ -42,12 +39,10 @@ def getXML(search, dataType, **kwargs):
         else:
             print ("Datatype is not recognised. Supported values are: run, study or experiment")
             exit()
-        
         # build the url for the query and download the xml file
         build_url = {"domain": dataType,
                     "query": search
                     }
-                        
         response = requests.get("https://www.ebi.ac.uk/ena/browser/api/xml/textsearch", params=build_url)
 
     # write to file
@@ -75,7 +70,6 @@ def parseXMLgetFTP(xmlfile, dataType):
             response = requests.get(url)
             outfile.write(response.content)
 
-
 def parseFTPgetFASTQ(ftpinfo):
     # parse the txt file with the fastq info for the ftp links and download
     
@@ -84,34 +78,39 @@ def parseFTPgetFASTQ(ftpinfo):
     # use regex to compile filesizes
     regexSize = re.compile(r"\d*;\d*|\d")
     
-    # gather info on filesizes
+    # collate filesizes, filenamess and ftplinks
     fileSize = []
+    filename = []
+    ftplink = []
     
     with open(ftpinfo, 'r') as infile:
-        # collate all the filesizes
         for line in infile:
+            # collate all the filesizes
             try:
                 linesplit = line.split()[3]
             except IndexError:
                 linesplit = "null"
             if regexSize.match(linesplit):
+            # check for paired fastq files
                 for elem in linesplit.split(";", 2):
                     fileSize.append(elem)
-    
-        # sum total filesizes and print to terminal
-        add = [int(x) for x in fileSize]
-        tot = sum(add)/10**9
-        print("You are about to download " + str(round(tot, 2)) +  " GB of files")
-        sys.stdout.flush()
-
-        with open(ftpinfo, 'r') as infile:
-            # get the ftp links
-            for line in infile:
+            # collate filenames and ftplinks
+            try:
                 linesplit = line.split()[1]
-                if regexFTP.match(linesplit):
-                    # check for paired fastq files
-                    for elem in linesplit.split(";", 2):
-                        filename = elem[elem.rfind("/")+1:]
-                        ftplink = "ftp://" + elem
-                        # download fastqs
-                        urllib.request.urlretrieve(ftplink, filename)
+            except IndexError:
+                linesplit = "null"
+            if regexFTP.match(linesplit):
+            # check for paired fastq files
+                for elem in linesplit.split(";", 2):
+                    filename.append(elem[elem.rfind("/")+1:])
+                    ftplink.append("ftp://" + elem)
+                        
+    # sum total filesizes and print to terminal
+    add = [int(x) for x in fileSize]
+    tot = sum(add)/10**9
+    print("You are about to download " + str(round(tot, 2)) +  " GB of files")
+    sys.stdout.flush()
+
+    # fetch fastqs
+    for link, name in zip(ftplink, filename):
+        urllib.request.urlretrieve(link, name)

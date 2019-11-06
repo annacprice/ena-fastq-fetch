@@ -24,7 +24,35 @@ optional arguments:
                       experiment
 -n NUMRUNS, --num-runs NUMRUNS
                       number of runs you wish to download
+-r, --report-file     generate a report file
 ```
+## **How enaFastqFetch works**
+enaFastqFetch works by querying the ENA's API. By providing enaFastqFetch with a search term and datatype, it will automatically download the fastqs associated with your request.
+
+### **Search term**
+The search term is specified through the -s flag. You can search for data by using its accession ID, taxon ID, or by using text searches.
+
+### **Datatype**
+The datatype is specified through the -d flag. enaFastqFetch supports three datatypes: run, experiment and study.
+
+The ENA uses a hierarchical system to define the datatype:
+* STUDY (accessions beginning with SRP, ERP, or DRP):
+A study defines an overarching investigation. In most cases it's a dataset associated with a publication.
+* SAMPLE (accessions beginning with SRS, ERS, or DRS):
+A sample is a biological sample which is used in a study.
+* EXPERIMENT (accessions beginning with SRX, ERX, or DRX):
+An experiment is conducted on a sample. This defines things like the instrument used for sequencing and the library preparation.
+* RUN (accessions beginning with SRR, ERR, or DRR):
+A run is the actual sequencing reads which are associated with a sample and experiment. I.e. these are the fastq files.
+
+So for example the run [SRR3206414](https://www.ebi.ac.uk/ena/data/view/SRR3206414) is associated with the sample [SRS1318643](https://www.ebi.ac.uk/ena/data/view/SRS1318643) and the experiment [SRX1615315](https://www.ebi.ac.uk/ena/data/view/SRX1615315), and overall it belongs to the study [SRP071047/PRJNA313382](https://www.ebi.ac.uk/ena/data/view/PRJNA313382).
+
+### **Number of runs to download**
+The number of runs to download can be specified using the -n flag. This flag is optional. If not specified, all the runs which match the requested search term will be downloaded.
+
+### **Report file**
+A report file including information on the downloaded data will be generated if you pass the -r flag.
+
 ## **Examples of using the accession ID to download**
 E.g. to download the fastq associated with the run SRR5188398:
 ```
@@ -38,17 +66,17 @@ E.g. to download all of the fastqs associated with the experiment SRX2504319:
 ```
 python enaFastqFetch.py -s SRX2504319 -d experiment
 ```
-## **Examples of using the taxonomic ID to download**
+## **Examples of using the taxon ID to download**
 E.g. to download all the runs found for the taxon 47839:
 ```
 python enaFastqFetch.py -s 47839 -d run
 ```
-The number of runs to download can be specified using the -n flag. E.g. to download 10 runs for the taxon 1773:
+ E.g. to download 10 runs for the taxon 1773 and generate a report file:
 ```
-python enaFastqFetch.py -s 1773 -d run -n 10
+python enaFastqFetch.py -s 1773 -d run -n 10 --report-file
 ```
 ## **Examples of using free text search to download**
-E.g. to download selex studies:
+E.g. to download 5 selex studies:
 ```
-python enaFastqFetch.py -s "SELEX" -d study
+python enaFastqFetch.py -s "SELEX" -d study -n 5
 ```

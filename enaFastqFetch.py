@@ -23,10 +23,10 @@ def main():
     reportWrite = args.reportWrite
     
     parseXMLgetFTP('ena.xml', dataType, numRuns)
-    parseFTPgetFASTQ('fastq.txt')
+    seqType = parseFTPgetFASTQ('fastq.txt')
 
     if reportWrite:
-        writeReport('ena.xml', dataType, numRuns)
+        writeReport('ena.xml', dataType, numRuns, seqType)
 
 if __name__ == "__main__":
     main()

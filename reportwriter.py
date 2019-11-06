@@ -2,7 +2,7 @@
 
 import xml.etree.ElementTree as ET
 
-def writeReport(xmlfile, dataType, numRuns):
+def writeReport(xmlfile, dataType, numRuns, seqType):
     
     # create element tree object
     tree = ET.parse(xmlfile)
@@ -12,6 +12,7 @@ def writeReport(xmlfile, dataType, numRuns):
     # gather info for report file
     accessID = []
     title = []
+    enaURL = []
 
     if dataType == "run":
         for item in root.iterfind("RUN/IDENTIFIERS/PRIMARY_ID"):
@@ -34,7 +35,10 @@ def writeReport(xmlfile, dataType, numRuns):
         accessID = accessID[:num]
         title = title[:num]
 
+    for item in accessID:
+        enaURL.append("https://www.ebi.ac.uk/ena/browser/view/{0}".format(item))
+
     # write report file
     with open('report.txt', 'w') as outfile:
-        for item in zip(accessID, title):
-            outfile.write("{0}\t{1}\n".format(item[0], item[1]))
+        for item in zip(accessID, title, seqType, enaURL):
+            outfile.write("{0}\t{1}\t{2}\t{3}\n".format(item[0], item[1], item[2], item[3]))

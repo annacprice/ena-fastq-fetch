@@ -83,10 +83,11 @@ def parseFTPgetFASTQ(ftpinfo):
     # use regex to compile filesizes
     regexSize = re.compile(r"\d*;\d*|\d")
     
-    # collate filesizes, filenamess and ftplinks
+    # collate filesizes, filenames, ftp links, and sequencing type
     fileSize = []
     filename = []
     ftplink = []
+    seqType = []
     
     with open(ftpinfo, 'r') as infile:
         for line in infile:
@@ -106,6 +107,10 @@ def parseFTPgetFASTQ(ftpinfo):
                 linesplit = "null"
             if regexFTP.match(linesplit):
             # check for paired fastq files
+                if len(linesplit.split(";", 2)) >= 2:
+                    seqType.append("PAIRED")
+                else:
+                    seqType.append("SINGLE")
                 for elem in linesplit.split(";", 2):
                     filename.append(elem[elem.rfind("/")+1:])
                     ftplink.append("ftp://" + elem)
@@ -119,3 +124,5 @@ def parseFTPgetFASTQ(ftpinfo):
     # fetch fastqs
     for link, name in zip(ftplink, filename):
         urllib.request.urlretrieve(link, name)
+    
+    return seqType

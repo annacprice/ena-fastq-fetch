@@ -29,6 +29,11 @@ def writeReport(xmlfile, dataType, numRuns, seqType):
             accessID.append(item.text)
         for item in root.iter("TITLE"):
             title.append(item.text)
+    elif dataType == "sample":
+        for item in root.iterfind("SAMPLE/IDENTIFIERS/PRIMARY_ID"):
+            accessID.append(item.text)
+        for item in root.iter("TITLE"):
+            title.append(item.text)
 
     if numRuns:
         num = int(numRuns)

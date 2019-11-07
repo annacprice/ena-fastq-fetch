@@ -10,7 +10,7 @@ def main():
     parser.add_argument("-s", "--search-term", dest="search", required=True, \
                         help = "term you wish to search for, e.g. Mycobacterium, 1763, SRR5188398, SRX2504319, PRJNA360902, SELEX")
     parser.add_argument("-d", "--data-type", dest="dataType", required=True, \
-                        help = "datatype you wish to search for, e.g. run, study, experiment")
+                        help = "datatype you wish to search for, e.g. run, study, experiment, sample")
     parser.add_argument("-n", "--num-runs", dest="numRuns", \
                         help = "number of runs you wish to download")
     parser.add_argument("-r", "--report-file", dest="reportWrite", action="store_true", \

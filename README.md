@@ -21,13 +21,13 @@ optional arguments:
                       SRR5188398, SRX2504319, PRJNA360902, SELEX
 -d DATATYPE, --data-type DATATYPE
                       datatype you wish to search for, e.g. run, study,
-                      experiment
+                      experiment, sample
 -n NUMRUNS, --num-runs NUMRUNS
                       number of runs you wish to download
 -r, --report-file     generate a report file
 ```
 ## **How enaFastqFetch works**
-enaFastqFetch works by querying the ENA's API. By providing enaFastqFetch with a search term and datatype, it will automatically download the fastqs associated with your request.
+enaFastqFetch works by querying the ENA's API for the corresponding XML file, then text mining the XML for the fastq download links. By providing enaFastqFetch with a search term and datatype, it will automatically download the fastqs associated with your request.
 
 ### **Search term**
 The search term is specified through the -s flag. You can search for data by using its accession ID, taxon ID, or by using text searches.
@@ -36,13 +36,13 @@ The search term is specified through the -s flag. You can search for data by usi
 The datatype is specified through the -d flag. enaFastqFetch supports three datatypes: run, experiment and study.
 
 The ENA uses a hierarchical system to define the datatype:
-* STUDY (accessions beginning with SRP, ERP, or DRP):
+* STUDY:
 A study defines an overarching investigation. In most cases it's a dataset associated with a publication.
-* SAMPLE (accessions beginning with SRS, ERS, or DRS):
+* SAMPLE:
 A sample is a biological sample which is used in a study.
-* EXPERIMENT (accessions beginning with SRX, ERX, or DRX):
+* EXPERIMENT:
 An experiment is conducted on a sample. This defines things like the instrument used for sequencing and the library preparation.
-* RUN (accessions beginning with SRR, ERR, or DRR):
+* RUN:
 A run is the actual sequencing reads which are associated with a sample and experiment. I.e. these are the fastq files.
 
 So for example the run [SRR3206414](https://www.ebi.ac.uk/ena/data/view/SRR3206414) is associated with the sample [SRS1318643](https://www.ebi.ac.uk/ena/data/view/SRS1318643) and the experiment [SRX1615315](https://www.ebi.ac.uk/ena/data/view/SRX1615315), and overall it belongs to the study [SRP071047/PRJNA313382](https://www.ebi.ac.uk/ena/data/view/PRJNA313382).
@@ -66,6 +66,11 @@ E.g. to download all of the fastqs associated with the experiment SRX2504319:
 ```
 python enaFastqFetch.py -s SRX2504319 -d experiment
 ```
+E.g. to download all of the fastqs associated with the sample SAMN06240265:
+```
+python enaFastqFetch.py -s SAMN06240265 -d sample
+```
+
 ## **Examples of using the taxon ID to download**
 E.g. to download all the runs found for the taxon 47839:
 ```

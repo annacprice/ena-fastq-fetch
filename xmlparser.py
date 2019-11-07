@@ -19,6 +19,8 @@ def getXML(search, dataType, **kwargs):
             dataType = "read_study"
         elif dataType == "experiment":
             dataType = "read_experiment"
+        elif dataType == "sample":
+            dataType = "read_sample"
         else:
             print ("Datatype is not recognised. Supported values are: run, study or experiment")
             exit()
@@ -36,6 +38,8 @@ def getXML(search, dataType, **kwargs):
             dataType = "sra-study"
         elif dataType == "experiment":
             dataType = "sra-experiment"
+        elif dataType == "sample":
+            dataType = "sra-sample"
         else:
             print ("Datatype is not recognised. Supported values are: run, study or experiment")
             exit()

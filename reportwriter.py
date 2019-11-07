@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
 import xml.etree.ElementTree as ET
+from itertools import islice
 
-def writeReport(xmlfile, dataType, numRuns, seqType):
+def writeReport(xmlfile, dataType, numDown, seqType):
     
     # create element tree object
     tree = ET.parse(xmlfile)
@@ -15,30 +16,49 @@ def writeReport(xmlfile, dataType, numRuns, seqType):
     enaURL = []
 
     if dataType == "run":
-        for item in root.iterfind("RUN/IDENTIFIERS/PRIMARY_ID"):
-            accessID.append(item.text)
-        for item in root.iter("TITLE"):
-            title.append(item.text)
+        if numDown:
+            for item in islice(root.iterfind("RUN/IDENTIFIERS/PRIMARY_ID"), 0, int(numDown)):
+                accessID.append(item.text)
+            for item in islice(root.iter("TITLE"), 0, int(numDown)):
+                title.append(item.text)
+        else:
+            for item in root.iterfind("RUN/IDENTIFIERS/PRIMARY_ID"):
+                accessID.append(item.text)
+            for item in root.iter("TITLE"):
+                title.append(item.text)
     elif dataType == "study":
-        for item in root.iterfind("STUDY/IDENTIFIERS/PRIMARY_ID"):
-            accessID.append(item.text)
-        for item in root.iter("STUDY_TITLE"):
-            title.append(item.text)
+        if numDown:
+            for item in islice(root.iterfind("STUDY/IDENTIFIERS/PRIMARY_ID"), 0, int(numDown)):
+                accessID.append(item.text)
+            for item in islice(root.iter("STUDY_TITLE"), 0, int(numDown)):
+                title.append(item.text)
+        else:
+            for item in root.iterfind("STUDY/IDENTIFIERS/PRIMARY_ID"):
+                accessID.append(item.text)
+            for item in root.iter("STUDY_TITLE"):
+                title.append(item.text)
     elif dataType == "experiment":
-        for item in root.iterfind("EXPERIMENT/IDENTIFIERS/PRIMARY_ID"):
-            accessID.append(item.text)
-        for item in root.iter("TITLE"):
-            title.append(item.text)
+        if numDown:
+            for item in islice(root.iterfind("EXPERIMENT/IDENTIFIERS/PRIMARY_ID"), 0, int(numDown)):
+                accessID.append(item.text)
+            for item in islice(root.iter("TITLE"), 0, int(numDown)):
+                title.append(item.text)
+        else:
+            for item in root.iterfind("EXPERIMENT/IDENTIFIERS/PRIMARY_ID"):
+                accessID.append(item.text)
+            for item in root.iter("TITLE"):
+                title.append(item.text)
     elif dataType == "sample":
-        for item in root.iterfind("SAMPLE/IDENTIFIERS/PRIMARY_ID"):
-            accessID.append(item.text)
-        for item in root.iter("TITLE"):
-            title.append(item.text)
-
-    if numRuns:
-        num = int(numRuns)
-        accessID = accessID[:num]
-        title = title[:num]
+        if numDown:
+            for item in islice(root.iterfind("SAMPLE/IDENTIFIERS/PRIMARY_ID"), 0, int(numDown)):
+                accessID.append(item.text)
+            for item in islice(root.iter("TITLE"), 0, int(numDown)):
+                title.append(item.text)
+        else:
+            for item in root.iterfind("SAMPLE/IDENTIFIERS/PRIMARY_ID"):
+                accessID.append(item.text)
+            for item in root.iter("TITLE"):
+                title.append(item.text)
 
     for item in accessID:
         enaURL.append("https://www.ebi.ac.uk/ena/browser/view/{0}".format(item))

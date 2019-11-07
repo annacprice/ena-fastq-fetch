@@ -76,7 +76,7 @@ python enaFastqFetch.py -s 47839 -d run
 python enaFastqFetch.py -s 1773 -d run -n 10 --report-file
 ```
 ## **Examples of using free text search to download**
-E.g. to download 5 selex studies:
+E.g. to download selex runs:
 ```
-python enaFastqFetch.py -s "SELEX" -d study -n 5
+python enaFastqFetch.py -s "SELEX" -d run
 ```

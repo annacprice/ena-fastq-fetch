@@ -22,18 +22,19 @@ optional arguments:
 -d DATATYPE, --data-type DATATYPE
                       datatype you wish to search for, e.g. run, study,
                       experiment, sample
--n NUMRUNS, --num-runs NUMRUNS
-                      number of runs you wish to download
+-n NUMDOWN, --num-downloads NUMDOWN
+                      number of runs/studies/experiments/samples you wish to
+                      download
 -r, --report-file     generate a report file
 ```
 ## **How enaFastqFetch works**
-enaFastqFetch works by querying the ENA's API for the corresponding XML file, then text mining the XML for the fastq download links. By providing enaFastqFetch with a search term and datatype, it will automatically download the fastqs associated with your request.
+enaFastqFetch works by querying the ENA's API for the corresponding XML file, then text mining the XML for the fastq download links. By providing enaFastqFetch with a search term and datatype it will automatically download the fastqs associated with your request.
 
 ### **Search term**
-The search term is specified through the -s flag. You can search for data by using its accession ID, taxon ID, or by using text searches.
+The search term is specified through the -s flag. You can search for data by using its accession ID, taxon ID, or by using free text searches.
 
 ### **Datatype**
-The datatype is specified through the -d flag. The ENA uses a hierarchical system to define the datatype:
+The datatype is specified through the -d flag. The following values are valid: run, study, experiment, sample. The ENA uses a hierarchical system to define the datatype:
 
 * STUDY:
 A study defines an overarching investigation. In most cases it's a dataset associated with a publication.
@@ -46,11 +47,11 @@ A run is the actual sequencing reads which are associated with a sample and expe
 
 So for example the run [SRR3206414](https://www.ebi.ac.uk/ena/data/view/SRR3206414) is associated with the sample [SRS1318643](https://www.ebi.ac.uk/ena/data/view/SRS1318643) and the experiment [SRX1615315](https://www.ebi.ac.uk/ena/data/view/SRX1615315), and overall it belongs to the study [SRP071047/PRJNA313382](https://www.ebi.ac.uk/ena/data/view/PRJNA313382).
 
-### **Number of runs to download**
-The number of runs to download can be specified using the -n flag. This flag is optional. If not specified, all the runs which match the requested search term will be downloaded.
+### **Number of runs/studies/experiments/samples to download**
+The number of runs/studies/experirments/samples to download can be specified using the -n flag. This flag is optional. If not specified, all the data which matches the requested search term will be downloaded.
 
 ### **Report file**
-A report file including information on the downloaded data will be generated if you pass the -r flag.
+A report file including information on the downloaded data will be generated if you pass the --report-file flag.
 
 ## **Examples of using the accession ID to download**
 E.g. to download the fastq associated with the run SRR5188398:
@@ -80,7 +81,7 @@ python enaFastqFetch.py -s 47839 -d run
 python enaFastqFetch.py -s 1773 -d run -n 10 --report-file
 ```
 ## **Examples of using free text search to download**
-E.g. to download selex runs:
+E.g. to download 5 selex studies:
 ```
-python enaFastqFetch.py -s "SELEX" -d run
+python enaFastqFetch.py -s "SELEX" -d study -n 5
 ```

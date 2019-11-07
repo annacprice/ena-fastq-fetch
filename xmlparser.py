@@ -6,6 +6,7 @@ import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import fromstring, ElementTree
 import re
 import urllib.request
+from itertools import islice
 
 def getXML(search, dataType, **kwargs):
     # download an xml file for the specified search terms
@@ -53,7 +54,7 @@ def getXML(search, dataType, **kwargs):
     with open('ena.xml', 'wb') as outfile:
         outfile.write(response.content)
 
-def parseXMLgetFTP(xmlfile, dataType, numRuns):
+def parseXMLgetFTP(xmlfile, dataType, numDown):
     # parse the xml file for http links which contain information on the fastq files
     # open the http links and write the result to file
 
@@ -63,15 +64,14 @@ def parseXMLgetFTP(xmlfile, dataType, numRuns):
     root = tree.getroot()
     
     httplinks = []
-    # iterate xml file for http links
-    for item in root.iter("ID"):
-        if item.text.startswith("http://") and item.text.endswith("fastq_bytes"):
-            httplinks.append(item.text)
 
-    # if number of runs has been specified then take slice of httplinks
-    if numRuns:
-        num = int(numRuns)
-        httplinks = httplinks[:num]
+    if numDown:
+        # iterate xml file for http links, use number of downloads if applicable
+        for item in islice(root.findall('.//XREF_LINK[DB="ENA-FASTQ-FILES"]'), 0, int(numDown)):
+            httplinks.append(item.find('ID').text)
+    else:
+        for item in root.findall('.//XREF_LINK[DB="ENA-FASTQ-FILES"]'):
+            httplinks.append(item.find('ID').text)
 
     # fetch http data and write to file
     with open('fastq.txt', 'wb') as outfile:

@@ -33,9 +33,8 @@ enaFastqFetch works by querying the ENA's API for the corresponding XML file, th
 The search term is specified through the -s flag. You can search for data by using its accession ID, taxon ID, or by using text searches.
 
 ### **Datatype**
-The datatype is specified through the -d flag. enaFastqFetch supports three datatypes: run, experiment and study.
+The datatype is specified through the -d flag. The ENA uses a hierarchical system to define the datatype:
 
-The ENA uses a hierarchical system to define the datatype:
 * STUDY:
 A study defines an overarching investigation. In most cases it's a dataset associated with a publication.
 * SAMPLE:
